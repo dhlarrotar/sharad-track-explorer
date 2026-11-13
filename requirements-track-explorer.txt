@@ -1,0 +1,13 @@
+folium>=0.17
+pandas>=2.0
+geojson>=3.0
+requests>=2.31
+certifi>=2024.2.2
+streamlit>=1.40
+streamlit-folium>=0.25
+numpy
+matplotlib
+scipy
+scikit-image
+rasterio
+netCDF4
