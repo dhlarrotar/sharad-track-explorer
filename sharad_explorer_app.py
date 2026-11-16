@@ -557,7 +557,7 @@ def render_run_previews(previews: dict[str, list[str]]) -> None:
                         column.image(
                             str(path),
                             caption=path.stem,
-                            use_container_width=True,
+                            width='stretch',
                         )
 
 
@@ -913,7 +913,7 @@ def main() -> None:
     map_result = st_folium(
         map_view,
         height=620,
-        use_container_width=True,
+        width='stretch',
         feature_group_to_add=selected_track_group,
         returned_objects=[
             'last_clicked',

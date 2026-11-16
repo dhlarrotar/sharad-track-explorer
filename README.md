@@ -2,9 +2,9 @@
 
 Explore Mars Reconnaissance Orbiter SHARAD observations by region, select
 tracks, prepare a downloader-ready list, and process archive data into
-radargram and terrain products. This workspace brings together the public
+filtered radargram, simulations and terrain products. This workspace brings together the public
 [PDS SHARAD USRDR V2 radargram archive](https://pds-geosciences.wustl.edu/mro/mro-m-sharad-5-radargram-v2/)
-and the complementary [PDS SHARAD Clutter Simulations archive](https://pds-geosciences.wustl.edu/mro/mro_sharad_simulations/).
+and the [PDS SHARAD Clutter Simulations archive](https://pds-geosciences.wustl.edu/mro/mro_sharad_simulations/).
 The clutter simulations are precomputed using MOLA topography and can be
 compared with measured radar echoes. The included downloader and
 `sharad_processor.py` carry selected observations through acquisition and
@@ -16,16 +16,25 @@ for maps and profiles.
 | Dataset | Purpose in this project |
 | --- | --- |
 | **PDS radargram catalog** | Lists observation IDs, orbit and acquisition times, and approximate start/end coordinates. The Explorer searches these records to find candidate tracks crossing an ROI. |
-| **USRDR V2 radargram** (`s_<track_id>_rgram.img` and `.lbl`) | Measured radar echoes and label metadata describing the binary product. The processor maps the measurements to the track geometry and creates radargram images. |
+| **USRDR V2 radargram** (`s_<track_id>_rgram.img` and `.lbl`) | Measured radar echoes and label metadata describing the product. The processor maps the measurements to the track geometry and creates radargram images. |
 | **Track geometry** (`s_<track_id>_geom.tab` and `.lbl`) | Geographic positions associated with radar samples, with a product label. The processor uses the coordinates to locate the track, select the ROI portion, and position products. |
 | **Radargram browse product** (`s_<track_id>_tiff.tif` and `.lbl`) | Archive TIFF browse image and its label, downloaded with the observation products. |
 | **MOLA-based clutter simulation** (`_sim.img/.xml`, `_emap.img/.xml`, `_rtrn.csv/.xml`) | Precomputed surface-echo simulations based on MOLA topography, with elevation-map and return-table products and their metadata. The processor uses available simulation data for comparison with the measured radargram. A browse hillshade TIFF is also downloaded. |
 | **HRSC or MOLA elevation** | Provides terrain heights for topographic maps and elevation profiles. This is a separate processor input. |
-| **MOLA shaded-relief and Viking natural-color basemaps** | Provide selectable visual context on the selection map. The Viking MDIM 2.1 color mosaic is a natural-color imagery alternative; neither basemap is the elevation raster used by the processor. |
+| 
 
 The map uses approximate catalog endpoint paths to identify candidate crossings.
 They are useful for searching and selecting observations; the geometry files
 provide the more detailed location information used in processing.
+
+## Why use this tool?
+
+This app combines ROI-based track discovery, selection, downloading, and batch
+processing in one focused workflow. By bringing catalog search, data
+preparation, and analysis together, it reduces manual handoffs and makes runs
+easier to repeat. Radargram filters, clutter-simulation comparisons, and
+terrain products can all be generated for the selected tracks.
+
 
 ## Start the Explorer
 
@@ -41,6 +50,9 @@ python -m streamlit run sharad_explorer_app.py
 The page opens in your browser. Keep the terminal open while using the app.
 
 ## A short walkthrough
+
+The figures below follow the workflow from finding and selecting tracks through
+processing and reviewing the generated products.
 
 ### 1. Find tracks for an area
 
@@ -63,7 +75,14 @@ The Explorer caches the catalog for one day. To load the latest index, open
 **Catalog options** in the sidebar and select **Refresh catalog now**. The
 selected ROI and its tracks are carried into the next steps.
 
-![Step 1: choose an ROI and select candidate tracks on the MOLA map](docs/screenshots/01-select-tracks.png)
+<br><br>
+
+<div align="center">
+  <img src="docs/screenshots/01-roi-track-map.png" alt="MOLA map showing the Mawrth Vallis area of interest and candidate SHARAD tracks" width="760">
+  <p><strong>Figure 1.</strong> Search an area and inspect candidate track crossings on the map.</p>
+</div>
+
+<br><br>
 
 ### 2. Review and download the selected data
 
@@ -83,7 +102,14 @@ The Explorer checks for files needed by the selected processing options and
 shows the downloader console. The downloader remains a separate tool; its
 download behavior and options are maintained there.
 
-![Step 2: review the selected tracks and downloader-ready list](docs/screenshots/02-review-download.png)
+<br><br>
+
+<div align="center">
+  <img src="docs/screenshots/02-selected-tracks.png" alt="Selected SHARAD track shown in the selected tracks bar" width="760">
+  <p><strong>Figure 2.</strong> Review the selected track IDs before downloading their data.</p>
+</div>
+
+<br><br>
 
 ### 3. Configure and run processing
 
@@ -91,6 +117,15 @@ Choose which products to create. The **Area name** in the sidebar is used for
 the map, saved track list, and output folder (`output/<area_name>/`). Terrain
 settings appear only when **Topographic maps** or **Elevation profiles** are
 selected.
+
+<br><br>
+
+<div align="center">
+  <img src="docs/screenshots/03-processing-settings.png" alt="Processing options with radargrams, maps, profiles, cluttergram comparisons, and MOLA terrain selected" width="760">
+  <p><strong>Figure 3.</strong> Choose processing products and terrain settings before starting a run.</p>
+</div>
+
+<br><br>
 
 | Option | Result |
 | --- | --- |
@@ -127,11 +162,28 @@ Results are saved under `output/<area_name>/`:
 | `radargrams/` | Original radargram images |
 | `filtered/` | Filtered radargram images |
 | `simulations/` | Processed cluttergram images |
-| `maps/` | Topographic maps and elevation profiles |
-| `power_plots/` | Power plots and associated CSV data |
+| `maps/` | Topographic maps and elevation profiles  |
 | `logs/` | Processing logs and skipped-track information |
 
-![Step 3: choose processing products and view the run controls](docs/screenshots/03-configure-processing.png)
+The app previews generated products after processing. The examples below show
+the terrain map and elevation profile together, followed by a Log-Gabor filtered
+radargram.
+
+<br><br>
+
+<div align="center">
+  <img src="docs/screenshots/04-map-profile-preview.png" alt="App preview showing a MOLA topographic map and elevation profile for a SHARAD track" width="760">
+  <p><strong>Figure 4.</strong> Review the generated terrain map and elevation profile in the app.</p>
+</div>
+
+<br><br>
+
+<div align="center">
+  <img src="docs/screenshots/05-filtered-radargram-preview.png" alt="App preview of a Log-Gabor filtered SHARAD radargram" width="760">
+  <p><strong>Figure 5.</strong> Inspect a filtered radargram preview after processing.</p>
+</div>
+
+<br><br>
 
 ## Project layout
 
@@ -158,19 +210,6 @@ sharad_processing/
     └── screenshots/              # App screenshots used in this guide
 ```
 
-## Certificate configuration
-
-The downloader verifies HTTPS certificates using `certifi`. If your
-organization uses a custom certificate authority, set `REQUESTS_CA_BUNDLE` to
-the PEM file before starting the Explorer:
-
-```powershell
-$env:REQUESTS_CA_BUNDLE = ".\certificates\organization-ca.pem"
-python -m streamlit run sharad_explorer_app.py
-```
-
-Paths shown in the app and guide are relative to the project folder. The app
-resolves them internally when it reads inputs or writes products.
 
 ## Command-line processing
 
@@ -180,3 +219,9 @@ running it. The Explorer provides the same processing options in the interface.
 For custom Python workflows, import `SHARADProcessor`,
 `read_roi_from_track_file`, or `run_batch_processing` from
 `sharad_processor.py`.
+
+## Feedback and contributions
+
+Comments, suggestions, bug reports, and contributions are welcome. Open an
+issue to share feedback or propose an improvement, or submit a pull request
+with a focused change.
