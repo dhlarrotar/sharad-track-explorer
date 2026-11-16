@@ -14,6 +14,8 @@ import logging
 from datetime import datetime
 import sys
 
+from mola_data import resolve_mola_file
+
 PROJECT_DIR = Path(__file__).resolve().parent
 HRSC_DIR = PROJECT_DIR / 'src' / 'hrsc'
 SHARAD_DIR = PROJECT_DIR / 'src' / 'sharad'
@@ -1946,6 +1948,8 @@ class SHARADProcessor:
                 MOLA_FILE if elevation_source == 'mola'
                 else HRSC_DIR / 'dtm_hrsc.tif'
             )
+        if elevation_source == 'mola':
+            elevation_file = resolve_mola_file(elevation_file)
         self.config['elevation_source'] = elevation_source
         self.config['elevation_file'] = str(elevation_file)
         print(
@@ -2493,6 +2497,9 @@ def run_batch_processing(config=None):
         # Load elevation data
         elevation_source = processor.config['elevation_source']
         elevation_file = processor.config['elevation_file']
+        if str(elevation_source).lower() == 'mola':
+            elevation_file = resolve_mola_file(elevation_file)
+            processor.config['elevation_file'] = str(elevation_file)
         
         if os.path.exists(elevation_file):
             print(f"🏔️  Loading {elevation_source.upper()} elevation data...")

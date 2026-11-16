@@ -104,8 +104,10 @@ selected.
 | **Adjust Log-Gabor settings** | Sets filter parameters; defaults match the processing module. |
 
 When terrain products are selected, enter an elevation file path relative to the
-project folder. MOLA is selected by default and uses the included
-`src/mola_dem/mola32.nc`; HRSC requires a local raster, such as
+project folder. MOLA is selected by default and uses
+`src/mola_dem/mola32.nc` when present. If only `src/mola_dem/mola32.zip` is
+present, the app extracts `mola32.nc` from it the first time MOLA terrain data
+is needed. HRSC requires a local raster, such as
 `src/hrsc/mawrth_vallis_hrsc.tif`. The two sources use different terrain
 workflows: HRSC uses the selected local HRSC raster with the processor's
 track-aligned map interpolation; MOLA reads a local window from the global MOLA

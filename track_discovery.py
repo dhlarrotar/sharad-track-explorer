@@ -1,8 +1,11 @@
 """Discover SHARAD radargram tracks from the public PDS archive index."""
 
 from io import BytesIO
+import os
+import ssl
 from urllib.request import urlopen
 
+import certifi
 import pandas as pd
 
 
@@ -40,7 +43,9 @@ _INDEX_USECOLS = [
 
 def load_track_catalog() -> pd.DataFrame:
     """Fetch and parse the PDS index entries for SHARAD radargrams."""
-    with urlopen(PDS_INDEX_URL, timeout=120) as response:
+    ca_bundle = os.environ.get('REQUESTS_CA_BUNDLE') or certifi.where()
+    ssl_context = ssl.create_default_context(cafile=ca_bundle)
+    with urlopen(PDS_INDEX_URL, timeout=120, context=ssl_context) as response:
         return parse_track_catalog(response.read())
 
 

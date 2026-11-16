@@ -19,6 +19,7 @@ import pandas as pd
 import streamlit as st
 from streamlit_folium import st_folium
 
+from mola_data import MolaDataError, resolve_mola_file
 from track_discovery import (
     clip_track_segment_to_roi,
     find_tracks_in_roi,
@@ -1146,7 +1147,11 @@ def main() -> None:
                     )
                     try:
                         elevation_path = resolve_project_path(elevation_file_value)
-                    except ValueError as error:
+                        if elevation_source == 'mola':
+                            elevation_path = resolve_mola_file(
+                                PROJECT_DIR / elevation_path
+                            )
+                    except (ValueError, MolaDataError) as error:
                         elevation_path_error = str(error)
                         st.warning(elevation_path_error)
                     elevation_missing = (
