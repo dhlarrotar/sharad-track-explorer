@@ -1080,13 +1080,13 @@ def main() -> None:
                         'Original radargrams',
                         value=False,
                         key='processing_generate_radargrams',
-                        help='Create radargram images from the measured echoes.',
+                        help='Create clipped and scaled radargram images from the measured echoes of the selected tracks.',
                     )
                     generate_maps = st.checkbox(
                         'Topographic maps',
                         value=False,
                         key='processing_generate_maps',
-                        help='Create track-aligned terrain maps.',
+                        help='Create track-aligned terrain maps for each selected track.',
                     )
                     generate_profiles = st.checkbox(
                         'Elevation profiles',
@@ -1096,10 +1096,10 @@ def main() -> None:
                     )
                 with product_columns[1]:
                     generate_simulations = st.checkbox(
-                        'Cluttergram comparisons',
+                        'Scaled Cluttergrams',
                         value=True,
                         key='processing_generate_simulations',
-                        help='Process the precomputed MOLA-based simulation products.',
+                        help='Process the precomputed MOLA-based simulation products to match the selected radargram.',
                     )
                     roi_filter = st.checkbox(
                         'Skip tracks with no data in this area',
@@ -1112,7 +1112,7 @@ def main() -> None:
                         options=['gaussian', 'lee', 'log_gabor'],
                         default=['log_gabor'],
                         key='processing_filters',
-                        help='Choose one or more filters, or leave empty to skip filtering.',
+                        help='Choose one or more filters for radargrams, or leave empty to skip filtering.',
                     )
 
                 needs_elevation = generate_maps or generate_profiles
