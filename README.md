@@ -220,6 +220,4 @@ For custom Python workflows, import `SHARADProcessor`,
 
 ## Feedback and contributions
 
-Comments, suggestions, bug reports, and contributions are welcome. Open an
-issue to share feedback or propose an improvement, or submit a pull request
-with a focused change.
+Comments, suggestions, bug reports, and contributions are always appreciated.
