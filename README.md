@@ -30,10 +30,8 @@ provide the more detailed location information used in processing.
 ## Why use this tool?
 
 This app combines ROI-based track discovery, selection, downloading, and batch
-processing in one focused workflow. By bringing catalog search, data
-preparation, and analysis together, it reduces manual handoffs and makes runs
-easier to repeat. Radargram filters, clutter-simulation comparisons, and
-terrain products can all be generated for the selected tracks.
+processing in one focused workflow. Radargram filters, clutter-simulation comparisons, and
+reference terrain products (footprint, elevation profile) can all be generated for the selected tracks.
 
 
 ## Start the Explorer
