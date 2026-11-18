@@ -5,11 +5,8 @@ tracks, prepare a downloader-ready list, and process archive data into
 filtered radargram, simulations and terrain products. This workspace brings together the public
 [PDS SHARAD USRDR V2 radargram archive](https://pds-geosciences.wustl.edu/mro/mro-m-sharad-5-radargram-v2/)
 and the [PDS SHARAD Clutter Simulations archive](https://pds-geosciences.wustl.edu/mro/mro_sharad_simulations/).
-The clutter simulations are precomputed using MOLA topography and can be
-compared with measured radar echoes. The included downloader and
-`sharad_processor.py` carry selected observations through acquisition and
-processing; separate HRSC or MOLA elevation rasters can supply terrain data
-for maps and profiles.
+The clutter simulations from the datasets are precomputed using MOLA topography and can be
+compared with measured radar echoes.
 
 ## What the datasets do
 
@@ -22,10 +19,6 @@ for maps and profiles.
 | **MOLA-based clutter simulation** (`_sim.img/.xml`, `_emap.img/.xml`, `_rtrn.csv/.xml`) | Precomputed surface-echo simulations based on MOLA topography, with elevation-map and return-table products and their metadata. The processor uses available simulation data for comparison with the measured radargram. A browse hillshade TIFF is also downloaded. |
 | **HRSC or MOLA elevation** | Provides terrain heights for topographic maps and elevation profiles. This is a separate processor input. |
 | 
-
-The map uses approximate catalog endpoint paths to identify candidate crossings.
-They are useful for searching and selecting observations; the geometry files
-provide the more detailed location information used in processing.
 
 ## Why use this tool?
 
@@ -55,24 +48,14 @@ processing and reviewing the generated products.
 ### 1. Find tracks for an area
 
 Choose a known Mars region in the sidebar, or set your own square region of
-interest (ROI). Type latitude and east longitude directly in the sidebar to
+interest (ROI). You can type latitude and east longitude directly in the sidebar to
 recenter the map, click a point on the map and select **Use map point as ROI
 center**, or use the map's rectangle tool to set the ROI center and width.
 The center uses latitude and east longitude from 0 to 360 degrees; the width is
 in degrees. A drawn rectangle is converted to a square using its larger
 latitude/longitude span. Select **Find tracks crossing this ROI**.
-Use the map's layer selector to switch between the default MOLA shaded relief
-and the Viking natural-color mosaic.
-Click cyan candidate lines on the map or select IDs in the **Selected tracks**
-bar. Selected tracks appear in yellow. Each selected ID appears as a chip;
-click its **×** to remove it without a separate button for every track.
-
-The search uses the public
-[NASA PDS SHARAD radargram index](https://pds-geosciences.wustl.edu/mro/mro-m-sharad-5-radargram-v2/mrosh_2101/index/index.tab).
-The Explorer caches the catalog for one day. To load the latest index, open
-**Catalog options** in the sidebar and select **Refresh catalog now**. The
-selected ROI and its tracks are carried into the next steps.
-
+You can then click tracks (cyan lines) on the map or select them by IDs in the **Selected tracks**
+bar. Selected tracks appear in yellow. 
 <br><br>
 
 <div align="center">
@@ -130,7 +113,7 @@ selected.
 | **Original radargrams** | Creates radargram images from the measured echoes. |
 | **Filtered radargrams** | Creates filtered versions using Gaussian smoothing, Lee speckle reduction, Log-Gabor noise reduction, or a combination. Leave the selection empty to skip filtering. |
 | **Mask persistent bright vertical channels** | On by default under **Advanced radargram cleanup**. Detects bright columns that exceed neighboring channels across most of the radargram, then shows the same channel span in black in original and filtered radargram images. Detection sensitivity and mask width can be adjusted there. |
-| **Cluttergram comparisons** | Processes available precomputed MOLA-based simulation products. |
+| **Cluttergram comparisons** | Create directly comparable cluttergrams from available precomputed MOLA-based simulation products. |
 | **Topographic maps** | Uses the selected elevation file and track geometry to create terrain maps. |
 | **Elevation profiles** | Plots terrain height along the selected tracks. |
 | **Skip tracks with no data in this area** | Keeps processing focused on selected ROI crossings. |
@@ -138,16 +121,7 @@ selected.
 
 When terrain products are selected, enter an elevation file path relative to the
 project folder. MOLA is selected by default and uses
-`src/mola_dem/mola32.nc` when present. If only `src/mola_dem/mola32.zip` is
-present, the app extracts `mola32.nc` from it the first time MOLA terrain data
-is needed. HRSC requires a local raster, such as
-`src/hrsc/mawrth_vallis_hrsc.tif`. The two sources use different terrain
-workflows: HRSC uses the selected local HRSC raster with the processor's
-track-aligned map interpolation; MOLA reads a local window from the global MOLA
-NetCDF grid and interpolates elevations onto a track-aligned map grid. Both map
-workflows rotate to follow the selected radar track and clip the along-track
-extent to its endpoints. Elevation profiles sample the selected source directly
-along the track.
+`src/mola_dem/mola32.nc` when present. HRSC DTM can be used as terrain source when the TIFF file is added to the project folder and selected, for example `src/hrsc/mawrth_vallis_hrsc.tif`. 
 
 Missing input files and terrain data are reported before the processor runs.
 Select **Run SHARAD processor** to see live output. The app previews images
@@ -209,14 +183,13 @@ sharad_processing/
 ```
 
 
-## Command-line processing
+## More information
 
-`run_processing.py` contains an example configuration for the command-line
-workflow. Review and customize its variables for your region and inputs before
-running it. The Explorer provides the same processing options in the interface.
-For custom Python workflows, import `SHARADProcessor`,
-`read_roi_from_track_file`, or `run_batch_processing` from
-`sharad_processor.py`.
+This application integrates and simplifies two existing Python SHARAD workflows into a single user-friendly interface, which you can use independently on the command line:
+ 
+- **[SHARAD-downloader](https://github.com/dhlarrotar/SHARAD-downloader)** for downloading SHARAD radargrams and precomputed cluttergrams from the SHARAD USRDR V2 archive.
+- **[sharad_processor](https://github.com/dhlarrotar/sharad_processor)** for processing Mars radar tracks, including radargram generation, filtering, clutter simulation analysis, and optional elevation products.
+ 
 
 ## Feedback and contributions
 
